@@ -1,0 +1,169 @@
+openapi: "3.0.0"
+info:
+  title: Sharesome API
+  version: 0.0.1
+paths:
+  /v1/files/{path}:
+    get:
+      tags: ["Files"]
+      operationId: getFiles
+      summary: Gets all files of the current user on the given path.
+      parameters:
+        - $ref: "#/components/parameters/path"
+      responses:
+        "200":
+          description: "File descriptor. In case of a folder, the result is an json with children. In case of a file the result contains file metadata."
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/File"
+        "500":
+          description: General error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags: ["Files"]
+      operationId: uploadFile
+      summary: Uploads a new file
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewFileEntry"
+      responses:
+        "201":
+          description: |-
+            File sucessfuly created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/File"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: General error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags: ["Files"]
+      operationId: deleteFile
+      summary: Deletes the file. In case of a directory, it recursively deletes all entries.
+      responses:
+        "200":
+          description: Entry was sucessfuly deleted.
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: General error, the operation has failed. Beware that in this case, when directory is being deleted and the request fails in middle of the recursive deletion, some files may be already deleted from the folder.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/files/{path}/content:
+    get:
+      tags: ["Files"]
+      operationId: getFileContent
+      summary: Gets content of a file. If called on directory, returns zip containing all of the files and directories in it.
+      parameters:
+        - $ref: "#/components/parameters/path"
+      responses:
+        "200":
+          description: "Content"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "500":
+          description: General error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  parameters:
+    path:
+      name: path
+      in: path
+      required: true
+      description: "Path to the file"
+      schema:
+        type: string
+      example: "/documents/confidential/world-conquer.docx"
+  schemas:
+    File:
+      type: object
+      description: Describes a file.
+      required:
+        - "type"
+        - "name"
+      properties:
+        type:
+          type: string
+          description: Type of the file.
+          example: FILE
+          enum:
+            - FILE
+            - DIRECTORY
+        created:
+          type: string
+          format: date-time
+          description: An UTC datetime at which the file was created.
+          example: "2020-04-18T22:00:00Z"
+        size:
+          type: number
+          description: Size of the file. In case of a directory, contains size of the whole directory.
+    NewFileEntry:
+      type: object
+      description: New file descriptor and content in case of a file, in case of directory, the content is omited.
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          description: Name of the new entry.
+          example: world-conquer.docx
+        type:
+          type: string
+          description: Type of the file.
+          example: FILE
+          enum:
+            - FILE
+            - DIRECTORY
+        content:
+          type: string
+          format: base64
+          description: Base64 encoded file content.
+    Error:
+      type: object
+      description: Describes error, its identifier and additional info.
+      required:
+        - "type"
+      properties:
+        type:
+          type: string
+          description: Unique id of the error
+          example: errors.files.create
+        message:
+          type: string
+          description: Error message
+          example: File is considered hamrful by the virustotal check.
+        details:
+          type: object
+          description: Provides additional metadata about the error.
