@@ -94,6 +94,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /v1/files/{path}/links:
+    get:
+      tags: ["Links"]
+      operationId: getFileLinks
+      summary: Gets all share link for this file which are not expired.
+      parameters:
+        - $ref: "#/components/parameters/path"
+      responses:
+        "200":
+          description: "List of the share links"
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShareLink"
+        "500":
+          description: General error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags: ["Links"]
+      operationId: createLink
+      summary: Creates a new (one-time) share link with given expiration time.
+      parameters:
+        - $ref: "#/components/parameters/path"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareLink"
+      responses:
+        "201":
+          description: Link created.
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: General error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 components:
   parameters:
@@ -128,6 +176,20 @@ components:
         size:
           type: number
           description: Size of the file. In case of a directory, contains size of the whole directory.
+    ShareLink:
+      type: object
+      description: Share link descriptor.
+      properties:
+        url:
+          readOnly: true
+          type: string
+          example: "https://example.com/files/links/XXGss6"
+          description: URL at which the file is available to download.
+        expirirationDate:
+          type: string
+          format: date-time
+          description: Expiration of the link.
+          example: "2020-04-18T22:00:00Z"
     NewFileEntry:
       type: object
       description: New file descriptor and content in case of a file, in case of directory, the content is omited.
