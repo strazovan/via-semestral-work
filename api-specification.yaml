@@ -130,6 +130,10 @@ paths:
       responses:
         "201":
           description: Link created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareLink"
         "400":
           description: Bad request
           content:
