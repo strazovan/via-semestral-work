@@ -35,8 +35,6 @@ public class UserDocumentDaoTest extends BaseDaoTestRunner {
     private UserDocument getUserDocument() {
         final UserDocument userDocument = new UserDocument();
         userDocument.setUsername("test user");
-        final Map<String, String> refs = Map.of("gofile", "123sdf");
-        userDocument.setStorageProviderInfoRefs(refs);
         return userDocument;
     }
 

@@ -12,7 +12,7 @@ public class UserDocument {
 
     private String username;
 
-    private Map<String, String> storageProviderInfoRefs;
+    private GoFileStorageInfo goFileStorageInfo;
 
     public String getId() {
         return id;
@@ -30,11 +30,11 @@ public class UserDocument {
         this.username = username;
     }
 
-    public Map<String, String> getStorageProviderInfoRefs() {
-        return storageProviderInfoRefs;
+    public GoFileStorageInfo getGoFileStorageInfo() {
+        return goFileStorageInfo;
     }
 
-    public void setStorageProviderInfoRefs(Map<String, String> storageProviderInfoRefs) {
-        this.storageProviderInfoRefs = storageProviderInfoRefs;
+    public void setGoFileStorageInfo(GoFileStorageInfo goFileStorageInfo) {
+        this.goFileStorageInfo = goFileStorageInfo;
     }
 }
