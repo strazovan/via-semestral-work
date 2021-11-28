@@ -48,7 +48,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /v1/files/:
+  /v1/files:
     post:
       tags: ["Files"]
       operationId: uploadFile
@@ -202,7 +202,7 @@ components:
           example: FILE
           enum:
             - FILE
-            - DIRECTORY
+            - FOLDER
         created:
           type: string
           format: date-time
@@ -252,7 +252,7 @@ components:
           example: FILE
           enum:
             - FILE
-            - DIRECTORY
+            - FOLDER
         content:
           type: string
           format: base64
