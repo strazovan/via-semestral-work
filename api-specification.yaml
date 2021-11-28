@@ -16,9 +16,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: "#/components/schemas/FileEntry"
+                $ref: "#/components/schemas/FileEntry"
+        "404":
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "500":
           description: General error
           content:
@@ -206,6 +210,12 @@ components:
         size:
           type: number
           description: Size of the file. In case of a directory, contains size of the whole directory.
+        children:
+          readOnly: true
+          description: Children. Present only on case of type == FOLDER
+          type: array
+          items:
+            $ref: "#/components/schemas/FileEntry"
     ShareLink:
       type: object
       description: Share link descriptor.
