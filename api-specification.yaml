@@ -3,13 +3,13 @@ info:
   title: Sharesome API
   version: 0.0.1
 paths:
-  /v1/files/{path}:
+  /v1/files/{file}:
     get:
       tags: ["Files"]
       operationId: getFiles
-      summary: Gets all files of the current user on the given path.
+      summary: Gets file information.
       parameters:
-        - $ref: "#/components/parameters/path"
+        - $ref: "#/components/parameters/file"
       responses:
         "200":
           description: "File descriptor. In case of a folder, the result is an json with children. In case of a file the result contains file metadata."
@@ -77,13 +77,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /v1/files/{path}/content:
+  /v1/files/{file}/content:
     get:
       tags: ["Files"]
       operationId: getFileContent
       summary: Gets content of a file. If called on directory, returns zip containing all of the files and directories in it.
       parameters:
-        - $ref: "#/components/parameters/path"
+        - $ref: "#/components/parameters/file"
       responses:
         "200":
           description: "Content"
@@ -98,13 +98,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /v1/files/{path}/links:
+  /v1/files/{file}/links:
     get:
       tags: ["Links"]
       operationId: getFileLinks
       summary: Gets all share link for this file which are not expired.
       parameters:
-        - $ref: "#/components/parameters/path"
+        - $ref: "#/components/parameters/file"
       responses:
         "200":
           description: "List of the share links"
@@ -125,7 +125,7 @@ paths:
       operationId: createLink
       summary: Creates a new (one-time) share link with given expiration time.
       parameters:
-        - $ref: "#/components/parameters/path"
+        - $ref: "#/components/parameters/file"
       requestBody:
         content:
           application/json:
@@ -179,14 +179,14 @@ paths:
 
 components:
   parameters:
-    path:
-      name: path
+    file:
+      name: file
       in: path
       required: true
-      description: "Path to the file"
+      description: "ID of the file"
       schema:
         type: string
-      example: "/documents/confidential/world-conquer.docx"
+      example: "56456fasASDFA"
   schemas:
     FileEntry:
       type: object
