@@ -35,7 +35,6 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
     private String uploadFileTemplate;
     private volatile boolean running;
     private String server;
-    private Map<String, String> tokenStorage = new HashMap<>(); // todo
 
     @Override
     public Folder createFolder(Folder folder, FileStorageAuthentication authentication) throws StorageException {
@@ -47,7 +46,7 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
             MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
             values.add("folderName", folder.name());
             values.add("parentFolderId", folder.parentFolderIdentifier().value());
-            values.add("token", tokenStorage.get(authentication.getAuthenticationIdentifier()));
+            values.add("token", authentication.getAuthenticationIdentifier());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(values, headers);
             final RestTemplate restTemplate = new RestTemplate();
             final ResponseEntity<CreateFolderResponse> response = restTemplate.exchange(baseUrl + "/createFolder", HttpMethod.PUT, request, CreateFolderResponse.class);
@@ -69,7 +68,7 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             MultiValueMap<String, Object> values = new LinkedMultiValueMap<>();
             values.add("folderId", file.fileInfo().folder().value());
-            values.add("token", tokenStorage.get(authentication.getAuthenticationIdentifier()));
+            values.add("token", authentication.getAuthenticationIdentifier());
             values.add("file", new ByteArrayResource(file.content()));
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(values, headers);
             final RestTemplate restTemplate = new RestTemplate();
@@ -106,7 +105,7 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
             values.add("contentsId", objectIdentifier.value());
-            values.add("token", tokenStorage.get(authentication.getAuthenticationIdentifier()));
+            values.add("token", authentication.getAuthenticationIdentifier());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(values, headers);
             final RestTemplate restTemplate = new RestTemplate();
             final ResponseEntity<DeleteContentResponse> response = restTemplate.exchange(baseUrl + "/deleteContent", HttpMethod.DELETE, request, DeleteContentResponse.class);
