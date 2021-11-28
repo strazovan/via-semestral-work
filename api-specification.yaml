@@ -146,6 +146,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /v1/tokens/{provider}:
+    post:
+      tags: ["Tokens"]
+      operationId: setToken
+      summary: Sets user's token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenEntry"
+      responses:
+        "200":
+          description: |-
+            Token set.
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: General error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 components:
   parameters:
@@ -216,6 +242,16 @@ components:
           type: string
           format: base64
           description: Base64 encoded file content.
+    TokenEntry:
+      type: object
+      description: Token entity
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          description: Token
+          example: ssfasdf654645ASDFA
     Error:
       type: object
       description: Describes error, its identifier and additional info.
