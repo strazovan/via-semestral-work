@@ -193,9 +193,14 @@ components:
       type: object
       description: Describes a file.
       required:
+        - "id"
         - "type"
         - "name"
       properties:
+        id:
+          type: string
+          description: Entry ID
+          example: sadfa654ASDF
         name:
           type: string
           description: Name of the file
