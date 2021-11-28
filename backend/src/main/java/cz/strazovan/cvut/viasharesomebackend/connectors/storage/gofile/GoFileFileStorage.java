@@ -3,10 +3,7 @@ package cz.strazovan.cvut.viasharesomebackend.connectors.storage.gofile;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.FileStorage;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.FileStorageAuthentication;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.StorageException;
-import cz.strazovan.cvut.viasharesomebackend.connectors.storage.gofile.dto.CreateFileResponse;
-import cz.strazovan.cvut.viasharesomebackend.connectors.storage.gofile.dto.CreateFolderResponse;
-import cz.strazovan.cvut.viasharesomebackend.connectors.storage.gofile.dto.DeleteContentResponse;
-import cz.strazovan.cvut.viasharesomebackend.connectors.storage.gofile.dto.GetServerResponse;
+import cz.strazovan.cvut.viasharesomebackend.connectors.storage.gofile.dto.*;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +35,48 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
     private String server;
 
     @Override
+    public ObjectIdentifier getUsersRootFolder(FileStorageAuthentication authentication) throws StorageException {
+        checkRunning();
+        checkAuthentication(authentication);
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+
+            String urlTemplate = UriComponentsBuilder.fromHttpUrl(baseUrl + "/getAccountDetails")
+                    .queryParam("token", "{token}")
+                    .queryParam("allDetails", true)
+                    .encode()
+                    .toUriString();
+
+            final Map<String, String> params = new HashMap<>();
+            params.put("token", authentication.getAuthenticationIdentifier());
+
+            final RestTemplate template = new RestTemplate();
+            ResponseEntity<GetAccountDetailsResponse> response = template.exchange(
+                    urlTemplate,
+                    HttpMethod.GET,
+                    entity,
+                    GetAccountDetailsResponse.class,
+                    params
+            );
+            if (response.getStatusCode().isError() || !response.getBody().getStatus().equals("ok")) {
+                throw new StorageException("Failed to fetch account details");
+            }
+            return new ObjectIdentifier(response.getBody().getData().getRootFolder());
+        } catch (RestClientException e) {
+            throw new StorageException(e);
+        }
+
+    }
+
+    @Override
     public Folder createFolder(Folder folder, FileStorageAuthentication authentication) throws StorageException {
         checkRunning();
         checkAuthentication(authentication);
         try {
-            final HttpHeaders headers = new HttpHeaders();
+            HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
             values.add("folderName", folder.name());
@@ -53,9 +88,29 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
             if (response.getStatusCode().isError() || !response.getBody().getStatus().equals("ok")) {
                 throw new StorageException("Failed to create the folder");
             }
-            return new Folder(new ObjectIdentifier(response.getBody().getData().getId()), false, folder.parentFolderIdentifier(), folder.name());
+            final ObjectIdentifier createdFolderId = new ObjectIdentifier(response.getBody().getData().getId());
+            if (folder.isPublic()) {
+                setFolderOption(authentication, "public", "true", createdFolderId);
+            }
+            return new Folder(createdFolderId, false, folder.parentFolderIdentifier(), folder.name());
         } catch (RestClientException e) {
             throw new StorageException(e);
+        }
+    }
+
+    private void setFolderOption(FileStorageAuthentication authentication, String option, String value, ObjectIdentifier folderId) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        final MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
+        values.add("folderId", folderId.value());
+        values.add("token", authentication.getAuthenticationIdentifier());
+        values.add("option", option);
+        values.add("value", value);
+        final HttpEntity<MultiValueMap<String, String>> setOptionsRequest = new HttpEntity<>(values, headers);
+        final RestTemplate restTemplate = new RestTemplate();
+        final ResponseEntity<SetFolderOptionResponse> response = restTemplate.exchange(baseUrl + "/setFolderOption", HttpMethod.PUT, setOptionsRequest, SetFolderOptionResponse.class);
+        if (response.getStatusCode().isError() || !response.getBody().getStatus().equals("ok")) {
+            throw new StorageException("Failed to set the folder options");
         }
     }
 

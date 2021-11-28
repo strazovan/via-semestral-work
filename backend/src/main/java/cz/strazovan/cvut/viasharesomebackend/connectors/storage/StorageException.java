@@ -1,6 +1,6 @@
 package cz.strazovan.cvut.viasharesomebackend.connectors.storage;
 
-public class StorageException extends Exception {
+public class StorageException extends RuntimeException {
 
     public StorageException(String message) {
         super(message);
