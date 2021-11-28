@@ -1,5 +1,6 @@
 package cz.strazovan.cvut.viasharesomebackend.model;
 
+import java.time.Instant;
 import java.util.Map;
 
 public class FileDescriptor {
@@ -9,8 +10,9 @@ public class FileDescriptor {
     private Long size;
     private VirusCheckResult virusCheckResult;
     private FileType fileType;
-    // path -> FileDescriptor
-    private Map<String, FileDescriptor> children;
+    private String parentContentId;
+    private Instant created;
+
 
     public String getContentId() {
         return contentId;
@@ -60,11 +62,19 @@ public class FileDescriptor {
         this.fileType = fileType;
     }
 
-    public Map<String, FileDescriptor> getChildren() {
-        return children;
+    public String getParentContentId() {
+        return parentContentId;
     }
 
-    public void setChildren(Map<String, FileDescriptor> children) {
-        this.children = children;
+    public void setParentContentId(String parentContentId) {
+        this.parentContentId = parentContentId;
+    }
+
+    public Instant getCreated() {
+        return created;
+    }
+
+    public void setCreated(Instant created) {
+        this.created = created;
     }
 }
