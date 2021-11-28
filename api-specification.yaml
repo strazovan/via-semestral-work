@@ -33,6 +33,8 @@ paths:
       tags: ["Files"]
       operationId: deleteFile
       summary: Deletes the file. In case of a directory, it recursively deletes all entries.
+      parameters:
+        - $ref: "#/components/parameters/file"
       responses:
         "200":
           description: Entry was sucessfuly deleted.
