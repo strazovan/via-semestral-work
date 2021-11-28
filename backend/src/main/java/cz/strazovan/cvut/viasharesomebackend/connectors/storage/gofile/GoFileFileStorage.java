@@ -5,11 +5,11 @@ import cz.strazovan.cvut.viasharesomebackend.connectors.storage.FileStorageAuthe
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.StorageException;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.gofile.dto.*;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.*;
+import cz.strazovan.cvut.viasharesomebackend.utils.NamedByteArrayResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -124,7 +124,7 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
             MultiValueMap<String, Object> values = new LinkedMultiValueMap<>();
             values.add("folderId", file.fileInfo().folder().value());
             values.add("token", authentication.getAuthenticationIdentifier());
-            values.add("file", new ByteArrayResource(file.content()));
+            values.add("file", new NamedByteArrayResource(file.fileInfo().name(), file.content()));
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(values, headers);
             final RestTemplate restTemplate = new RestTemplate();
             final ResponseEntity<CreateFileResponse> response = restTemplate.exchange(uploadFileTemplate.replace("{{server}}", this.server), HttpMethod.POST, request, CreateFileResponse.class);
