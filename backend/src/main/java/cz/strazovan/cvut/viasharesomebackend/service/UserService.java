@@ -18,4 +18,6 @@ public interface UserService {
     FileDescriptor createFile(String username, NewFileEntry newFileEntry);
 
     List<FileDescriptor> getChildren(String username, ObjectIdentifier objectIdentifier);
+
+    void deleteFile(String username, ObjectIdentifier objectIdentifier);
 }

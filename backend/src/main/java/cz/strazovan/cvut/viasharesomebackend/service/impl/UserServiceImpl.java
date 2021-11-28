@@ -128,6 +128,22 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void deleteFile(String username, ObjectIdentifier objectIdentifier) {
+        final UserDocument userDocument = getUserDocumentThrowing(username);
+        checkUser(userDocument);
+        final GoFileStorageInfo goFileStorageInfo = userDocument.getGoFileStorageInfo();
+
+        // first try to delete the file from the remote storage
+        this.goFileStorage.deleteObject(objectIdentifier, goFileStorageInfo::getToken);
+        // if the operation doesn't throw, we need to delete the file and all of its children, if it has any
+        goFileStorageInfo.getFiles()
+                .entrySet()
+                .removeIf(entry -> entry.getKey().equals(objectIdentifier.value()) ||
+                        objectIdentifier.value().equals(entry.getValue().getParentContentId()));
+        this.userDocumentDao.save(userDocument);
+    }
+
 
     private void checkUser(UserDocument userDocument) {
         if (userDocument.getGoFileStorageInfo() == null) {

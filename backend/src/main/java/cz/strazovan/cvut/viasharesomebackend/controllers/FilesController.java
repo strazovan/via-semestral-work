@@ -59,6 +59,12 @@ public class FilesController implements V1ApiDelegate {
         return ResponseEntity.created(URI.create("/v1/files/" + descriptor.getContentId())).body(this.fileDescriptorMapper(descriptor));
     }
 
+    @Override
+    public ResponseEntity<Void> deleteFile(String file) {
+        this.userService.deleteFile(UserContext.getOauthUserMail().orElseThrow(), new ObjectIdentifier(file));
+        return ResponseEntity.ok().build();
+    }
+
     private FileEntry fileDescriptorMapper(FileDescriptor descriptor) {
         final var entry = new FileEntry();
         entry.setId(descriptor.getContentId());
