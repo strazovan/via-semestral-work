@@ -196,6 +196,10 @@ components:
         - "type"
         - "name"
       properties:
+        name:
+          type: string
+          description: Name of the file
+          example: world-conquer.docx
         type:
           type: string
           description: Type of the file.
