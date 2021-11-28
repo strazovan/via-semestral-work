@@ -29,6 +29,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    delete:
+      tags: ["Files"]
+      operationId: deleteFile
+      summary: Deletes the file. In case of a directory, it recursively deletes all entries.
+      responses:
+        "200":
+          description: Entry was sucessfuly deleted.
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: General error, the operation has failed. Beware that in this case, when directory is being deleted and the request fails in middle of the recursive deletion, some files may be already deleted from the folder.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/files/:
     post:
       tags: ["Files"]
       operationId: uploadFile
@@ -54,25 +74,6 @@ paths:
                 $ref: "#/components/schemas/Error"
         "500":
           description: General error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    delete:
-      tags: ["Files"]
-      operationId: deleteFile
-      summary: Deletes the file. In case of a directory, it recursively deletes all entries.
-      responses:
-        "200":
-          description: Entry was sucessfuly deleted.
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "500":
-          description: General error, the operation has failed. Beware that in this case, when directory is being deleted and the request fails in middle of the recursive deletion, some files may be already deleted from the folder.
           content:
             application/json:
               schema:
@@ -241,6 +242,10 @@ components:
           type: string
           description: Name of the new entry.
           example: world-conquer.docx
+        parentId:
+          type: string
+          description: ID of the parent folder for this file.
+          example: sdfasf65456ASDGA
         type:
           type: string
           description: Type of the file.
