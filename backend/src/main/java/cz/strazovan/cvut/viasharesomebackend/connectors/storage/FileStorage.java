@@ -17,4 +17,6 @@ public interface FileStorage {
     List<FileInfo> listFolder(ObjectIdentifier folderIdentifier, FileStorageAuthentication authentication) throws StorageException;
 
     void deleteObject(ObjectIdentifier objectIdentifier, FileStorageAuthentication authentication) throws StorageException;
+
+    String generateDownloadLink(FileInfo fileInfo);
 }

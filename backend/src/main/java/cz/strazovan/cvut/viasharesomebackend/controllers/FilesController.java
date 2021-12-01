@@ -1,6 +1,7 @@
 package cz.strazovan.cvut.viasharesomebackend.controllers;
 
 import cz.strazovan.cvut.viasharesomebackend.api.controllers.V1ApiDelegate;
+import cz.strazovan.cvut.viasharesomebackend.api.model.DownloadLink;
 import cz.strazovan.cvut.viasharesomebackend.api.model.FileEntry;
 import cz.strazovan.cvut.viasharesomebackend.api.model.NewFileEntry;
 import cz.strazovan.cvut.viasharesomebackend.api.model.TokenEntry;
@@ -63,6 +64,16 @@ public class FilesController implements V1ApiDelegate {
     public ResponseEntity<Void> deleteFile(String file) {
         this.userService.deleteFile(UserContext.getOauthUserMail().orElseThrow(), new ObjectIdentifier(file));
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<DownloadLink> getFileContent(String file) {
+        final var fileDownloadLink = this.userService.getFileDownloadLink(UserContext.getOauthUserMail().orElseThrow(),
+                new ObjectIdentifier(file));
+        if(fileDownloadLink.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new DownloadLink().link(fileDownloadLink.get()));
     }
 
     private FileEntry fileDescriptorMapper(FileDescriptor descriptor) {

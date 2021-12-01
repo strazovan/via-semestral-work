@@ -91,10 +91,9 @@ paths:
         "200":
           description: "Content"
           content:
-            application/octet-stream:
+            application/json:
               schema:
-                type: string
-                format: binary
+                $ref: "#/components/schemas/DownloadLink"
         "500":
           description: General error
           content:
@@ -278,6 +277,16 @@ components:
           type: string
           description: Token
           example: ssfasdf654645ASDFA
+    DownloadLink:
+        type: object
+        description: Download link
+        required:
+          - link
+        properties:
+          link: 
+            type: string
+            description: Download link
+            example: http://example.com/3456789dfghjk
     Error:
       type: object
       description: Describes error, its identifier and additional info.

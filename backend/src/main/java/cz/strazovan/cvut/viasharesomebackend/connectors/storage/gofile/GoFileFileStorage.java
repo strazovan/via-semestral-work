@@ -29,8 +29,8 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
 
     @Value("${connectors.gofile.baseURL}")
     private String baseUrl;
-    @Value("${connectors.gofile.uploadFileTemplate}")
-    private String uploadFileTemplate;
+    @Value("${connectors.gofile.fileTemplate}")
+    private String fileTemplate;
     private volatile boolean running;
     private String server;
 
@@ -127,7 +127,7 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
             values.add("file", new NamedByteArrayResource(file.fileInfo().name(), file.content()));
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(values, headers);
             final RestTemplate restTemplate = new RestTemplate();
-            final ResponseEntity<CreateFileResponse> response = restTemplate.exchange(uploadFileTemplate.replace("{{server}}", this.server), HttpMethod.POST, request, CreateFileResponse.class);
+            final ResponseEntity<CreateFileResponse> response = restTemplate.exchange(fileTemplate.replace("{{server}}", this.server) + "/uploadFile", HttpMethod.POST, request, CreateFileResponse.class);
             final CreateFileResponse body = response.getBody();
             if (response.getStatusCode().isError() || !body.getStatus().equals("ok")) {
                 throw new StorageException("Failed to upload the file");
@@ -174,6 +174,13 @@ public class GoFileFileStorage implements FileStorage, SmartLifecycle {
         } catch (RestClientException e) {
             throw new StorageException(e);
         }
+    }
+
+    @Override
+    public String generateDownloadLink(FileInfo fileInfo) {
+        // the format for direct link is https://{server}.gofile.io/download/{objectIdentifier}/{fileName}
+        return fileTemplate.replace("{{server}}", this.server) + "/download/"
+                + fileInfo.fileIdentifier().value() + "/" + fileInfo.name();
     }
 
     private void checkRunning() throws StorageException {

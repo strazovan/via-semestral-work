@@ -20,4 +20,6 @@ public interface UserService {
     List<FileDescriptor> getChildren(String username, ObjectIdentifier objectIdentifier);
 
     void deleteFile(String username, ObjectIdentifier objectIdentifier);
+
+    Optional<String> getFileDownloadLink(String username, ObjectIdentifier objectIdentifier);
 }

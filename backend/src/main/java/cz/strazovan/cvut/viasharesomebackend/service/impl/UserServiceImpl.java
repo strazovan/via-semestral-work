@@ -144,6 +144,21 @@ public class UserServiceImpl implements UserService {
         this.userDocumentDao.save(userDocument);
     }
 
+    @Override
+    public Optional<String> getFileDownloadLink(String username, ObjectIdentifier objectIdentifier) {
+        final UserDocument userDocument = getUserDocumentThrowing(username);
+        checkUser(userDocument);
+        final GoFileStorageInfo goFileStorageInfo = userDocument.getGoFileStorageInfo();
+        final FileDescriptor fileDescriptor = goFileStorageInfo.getFiles().get(objectIdentifier.value());
+        if (fileDescriptor == null) {
+            return Optional.empty();
+        }
+        // todo we should allow only files
+        final String link = this.goFileStorage.generateDownloadLink(new FileInfo(new ObjectIdentifier(fileDescriptor.getParentContentId()),
+                new ObjectIdentifier(fileDescriptor.getContentId()),
+                fileDescriptor.getName()));
+        return Optional.of(link);
+    }
 
     private void checkUser(UserDocument userDocument) {
         if (userDocument.getGoFileStorageInfo() == null) {
