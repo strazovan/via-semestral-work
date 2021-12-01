@@ -7,8 +7,10 @@ public class GoFileStorageInfo {
     private String rootFolderId;
     private String applicationFolderId;
     private String publicFolderId;
-    // path -> FileDescriptor
+    // fileId -> FileDescriptor
     private Map<String, FileDescriptor> files;
+    // fileId -> FileDescriptor
+    private Map<String, PublicShareLink> links;
 
     public String getToken() {
         return token;
@@ -48,5 +50,13 @@ public class GoFileStorageInfo {
 
     public void setFiles(Map<String, FileDescriptor> files) {
         this.files = files;
+    }
+
+    public Map<String, PublicShareLink> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Map<String, PublicShareLink> links) {
+        this.links = links;
     }
 }

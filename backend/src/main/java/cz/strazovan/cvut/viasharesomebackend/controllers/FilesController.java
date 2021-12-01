@@ -1,15 +1,13 @@
 package cz.strazovan.cvut.viasharesomebackend.controllers;
 
 import cz.strazovan.cvut.viasharesomebackend.api.controllers.V1ApiDelegate;
-import cz.strazovan.cvut.viasharesomebackend.api.model.DownloadLink;
-import cz.strazovan.cvut.viasharesomebackend.api.model.FileEntry;
-import cz.strazovan.cvut.viasharesomebackend.api.model.NewFileEntry;
-import cz.strazovan.cvut.viasharesomebackend.api.model.TokenEntry;
+import cz.strazovan.cvut.viasharesomebackend.api.model.*;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.ObjectIdentifier;
 import cz.strazovan.cvut.viasharesomebackend.model.FileDescriptor;
 import cz.strazovan.cvut.viasharesomebackend.model.FileType;
 import cz.strazovan.cvut.viasharesomebackend.service.UserService;
 import cz.strazovan.cvut.viasharesomebackend.utils.security.UserContext;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -74,6 +72,15 @@ public class FilesController implements V1ApiDelegate {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new DownloadLink().link(fileDownloadLink.get()));
+    }
+
+    @Override
+    public ResponseEntity<ShareLink> createLink(String file, ShareLink shareLink) {
+        final String link = this.userService.createShareLink(UserContext.getOauthUserMail().orElseThrow(),
+                file, shareLink.getExpirirationDate().toInstant());
+        return ResponseEntity.ok(new ShareLink()
+                .expirirationDate(shareLink.getExpirirationDate())
+                .url(link));
     }
 
     private FileEntry fileDescriptorMapper(FileDescriptor descriptor) {

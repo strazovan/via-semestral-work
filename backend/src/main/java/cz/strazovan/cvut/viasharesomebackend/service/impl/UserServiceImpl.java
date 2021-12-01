@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         applicationFolderFileDescriptor.setFileType(FileType.FOLDER);
         files.put(applicationFolderFileDescriptor.getContentId(), applicationFolderFileDescriptor);
         storageInfo.setFiles(files);
+        storageInfo.setLinks(new HashMap<>());
         userDocument.setGoFileStorageInfo(storageInfo);
         this.userDocumentDao.save(userDocument);
     }
@@ -158,6 +159,14 @@ public class UserServiceImpl implements UserService {
                 new ObjectIdentifier(fileDescriptor.getContentId()),
                 fileDescriptor.getName()));
         return Optional.of(link);
+    }
+
+    @Override
+    public String createShareLink(String username, String file, Instant expiration) {
+        final UserDocument userDocument = getUserDocumentThrowing(username);
+        checkUser(userDocument);
+        // todo free goFile tier doesn't allow copying
+        return null;
     }
 
     private void checkUser(UserDocument userDocument) {

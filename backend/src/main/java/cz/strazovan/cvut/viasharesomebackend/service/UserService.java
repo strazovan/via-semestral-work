@@ -5,6 +5,7 @@ import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.ObjectIden
 import cz.strazovan.cvut.viasharesomebackend.model.FileDescriptor;
 import cz.strazovan.cvut.viasharesomebackend.model.UserDocument;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,6 @@ public interface UserService {
     void deleteFile(String username, ObjectIdentifier objectIdentifier);
 
     Optional<String> getFileDownloadLink(String username, ObjectIdentifier objectIdentifier);
+
+    String createShareLink(String username, String file, Instant expiration);
 }
