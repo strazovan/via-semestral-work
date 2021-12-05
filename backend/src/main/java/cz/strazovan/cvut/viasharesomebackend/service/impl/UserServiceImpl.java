@@ -6,11 +6,10 @@ import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.File;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.FileInfo;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.Folder;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.ObjectIdentifier;
+import cz.strazovan.cvut.viasharesomebackend.connectors.virustotal.VirusTotalApi;
+import cz.strazovan.cvut.viasharesomebackend.connectors.virustotal.model.CheckResult;
 import cz.strazovan.cvut.viasharesomebackend.dao.UserDocumentDao;
-import cz.strazovan.cvut.viasharesomebackend.model.FileDescriptor;
-import cz.strazovan.cvut.viasharesomebackend.model.FileType;
-import cz.strazovan.cvut.viasharesomebackend.model.GoFileStorageInfo;
-import cz.strazovan.cvut.viasharesomebackend.model.UserDocument;
+import cz.strazovan.cvut.viasharesomebackend.model.*;
 import cz.strazovan.cvut.viasharesomebackend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +27,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserDocumentDao userDocumentDao;
     private final FileStorage goFileStorage;
+    private final VirusTotalApi virusTotalApi;
 
     public UserServiceImpl(UserDocumentDao userDocumentDao,
-                           @Autowired FileStorage goFileStorage) {
+                           @Autowired FileStorage goFileStorage, VirusTotalApi virusTotalApi) {
         this.userDocumentDao = userDocumentDao;
         this.goFileStorage = goFileStorage;
+        this.virusTotalApi = virusTotalApi;
     }
 
     @Override
@@ -103,8 +104,14 @@ public class UserServiceImpl implements UserService {
             descriptor.setContentId(newFolder.folderIdentifier().value());
         } else {
             // we are uploading file
-            final var fileInfo = new FileInfo(new ObjectIdentifier(parent.getContentId()), null, newFileEntry.getName());
             final byte[] bytes = Base64.getDecoder().decode(newFileEntry.getContent());
+            final CheckResult checkResult = this.virusTotalApi.checkFile(bytes);
+            if(checkResult != CheckResult.OK) {
+                // todo if throwing and failing is the best way. the other solution could be to setVirusCheckResult to FAILED
+                throw new RuntimeException("File is not safe.");
+            }
+            final var fileInfo = new FileInfo(new ObjectIdentifier(parent.getContentId()), null, newFileEntry.getName());
+            descriptor.setVirusCheckResult(VirusCheckResult.OK);
             final FileInfo uploadedFileInfo = this.goFileStorage.createFile(new File(fileInfo, bytes), goFileStorageInfo::getToken);
             descriptor.setContentId(uploadedFileInfo.fileIdentifier().value());
             descriptor.setSize((long) bytes.length);
