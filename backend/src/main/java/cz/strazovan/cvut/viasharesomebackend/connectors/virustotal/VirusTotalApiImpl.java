@@ -51,8 +51,8 @@ public class VirusTotalApiImpl implements VirusTotalApi {
 
     private String uploadTheFile(byte[] bytes) {
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("x-apikey", this.token);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.set("X-Apikey", this.token);
         final MultiValueMap<String, Object> values = new LinkedMultiValueMap<>();
         values.add("file", new NamedByteArrayResource("file", bytes));
         final HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(values, headers);
@@ -63,8 +63,8 @@ public class VirusTotalApiImpl implements VirusTotalApi {
 
     private AnalysisResponse downloadAnalysis(String id) {
         final HttpHeaders headers = new HttpHeaders();
-        headers.set("x-apikey", this.token);
-        final HttpEntity<?> request = new HttpEntity<>(headers.toSingleValueMap());
+        headers.set("X-Apikey", this.token);
+        final HttpEntity<?> request = new HttpEntity<>(null, headers);
         final RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<AnalysisResponse> response = restTemplate.exchange(this.baseURL + "/analyses/" + id, HttpMethod.GET, request, AnalysisResponse.class);
         return response.getBody();
