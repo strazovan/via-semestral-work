@@ -5,7 +5,10 @@ module.exports = {
   devServer: {
     proxy: {
       '/be': {
-        target: 'http://localhost:18080/'
+        target: 'http://localhost:18080/',
+        pathRewrite: {
+          '/be': '/'
+        }
       }
     }
   }
