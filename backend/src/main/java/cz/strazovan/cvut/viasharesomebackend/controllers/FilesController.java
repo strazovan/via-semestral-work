@@ -91,7 +91,7 @@ public class FilesController implements V1ApiDelegate {
         userInfo.setUsername(currentUser);
         if (userDocument.getGoFileStorageInfo() != null) {
             userInfo.setToken(userDocument.getGoFileStorageInfo().getToken());
-            userInfo.setRootFolder(userDocument.getGoFileStorageInfo().getRootFolderId());
+            userInfo.setRootFolder(userDocument.getGoFileStorageInfo().getApplicationFolderId());
         }
         return ResponseEntity.ok(userInfo);
     }
