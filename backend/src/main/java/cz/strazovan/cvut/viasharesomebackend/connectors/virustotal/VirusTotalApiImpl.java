@@ -35,6 +35,7 @@ public class VirusTotalApiImpl implements VirusTotalApi {
             while (!"completed".equals(analysisResponse.getData().getAttributes().getStatus()) && attempts < this.analysisAttemptsLimit) {
                 TimeUnit.MILLISECONDS.sleep(this.analysisAttemptsTimeout);
                 analysisResponse = this.downloadAnalysis(analysisId);
+                attempts++;
             }
             if (!"completed".equals(analysisResponse.getData().getAttributes().getStatus())) {
                 throw new VirusCheckException("Failed to check the file."); // todo consider returning unknown instead of failing
