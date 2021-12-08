@@ -7,7 +7,7 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field label="GoFile token"></v-text-field>
+              <v-text-field label="GoFile token" v-model="tokenInput"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "AppMain",
   props: {
@@ -68,12 +70,12 @@ export default {
     },
   },
   methods: {
-    saveToken() {
-      // todo send the token to the backend
-      const saved = true; // value base on the result of the save operation
-      if (saved) {
-        this.$emit("token-saved");
-      }
+    async saveToken() {
+      // todo try-catch
+      await axios.post("be/v1/tokens/gofile", {
+        value: this.tokenInput
+      });
+      this.$emit("token-saved");
     },
     itemIcon(item) {
       return item.type === "FOLDER" ? "mdi-folder" : "mdi-file";
