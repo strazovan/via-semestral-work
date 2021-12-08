@@ -44,9 +44,8 @@ export default {
       }
       this.userInfo = {
         username: "strazovan",
-        tokens: {
-          gofile: null,
-        },
+        token: null,
+        rootFolder: ""
       };
     },
     tokenSaved() {
@@ -54,7 +53,7 @@ export default {
       // todo this is here just for development
       this.userInfo = {
         ...this.userInfo,
-        tokens: { ...this.userInfo.tokens, gofile: "test" },
+        token: "test"
       };
     },
   },

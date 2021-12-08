@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     hasTokenSet() {
-      return this.user.tokens.gofile !== null;
+      return this.user.token !== null;
     },
   },
   methods: {
