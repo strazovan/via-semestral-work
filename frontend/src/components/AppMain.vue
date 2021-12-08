@@ -14,7 +14,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text> Save </v-btn>
+          <v-btn color="blue darken-1" text @click="saveToken"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -35,6 +35,15 @@ export default {
   computed: {
     hasTokenSet() {
       return this.user.tokens.gofile !== null;
+    },
+  },
+  methods: {
+    saveToken() {
+      // todo send the token to the backend
+      const saved = true; // value base on the result of the save operation
+      if (saved) {
+        this.$emit("token-saved");
+      }
     },
   },
 };

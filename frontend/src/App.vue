@@ -9,7 +9,7 @@
     <v-main>
       <app-login v-if="!loggedIn" v-model="loggedIn"></app-login>
       <div v-else>
-        <app-main :user="userInfo"></app-main>
+        <app-main :user="userInfo" @token-saved="tokenSaved"></app-main>
       </div>
     </v-main>
   </v-app>
@@ -47,6 +47,14 @@ export default {
         tokens: {
           gofile: null,
         },
+      };
+    },
+    tokenSaved() {
+      this.getUserInfo();
+      // todo this is here just for development
+      this.userInfo = {
+        ...this.userInfo,
+        tokens: { ...this.userInfo.tokens, gofile: "test" },
       };
     },
   },
