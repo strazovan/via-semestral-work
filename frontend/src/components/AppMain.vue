@@ -7,7 +7,10 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field label="GoFile token" v-model="tokenInput"></v-text-field>
+              <v-text-field
+                label="GoFile token"
+                v-model="tokenInput"
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -20,7 +23,7 @@
     </v-dialog>
 
     <div v-if="currentDirectory != null">
-      <div v-for="file in folderContent" :key="file.id">
+      <div v-for="file in currentItems" :key="file.id">
         <v-icon>{{ itemIcon(file) }}</v-icon>
         <span @click="handleItemClick(file)">{{ file.name }}</span>
       </div>
@@ -29,7 +32,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   name: "AppMain",
@@ -40,40 +43,19 @@ export default {
     return {
       tokenInput: null,
       currentDirectory: null,
+      currentItems: [],
     };
   },
   computed: {
     hasTokenSet() {
       return this.user.token !== null;
     },
-    folderContent() {
-      // eslint-disable-next-line no-console
-      console.log(this.currentDirectory); // todo fetch the content of the directory
-      return [
-        {
-          id: "sdlkfafkj",
-          name: "test file",
-          type: "FILE",
-          created: new Date(),
-          size: 453,
-          children: [],
-        },
-        {
-          id: "d'f;lps;s",
-          name: "test folder",
-          type: "FOLDER",
-          created: new Date(),
-          size: 0,
-          children: [],
-        },
-      ];
-    },
   },
   methods: {
     async saveToken() {
       // todo try-catch
       await axios.post("be/v1/tokens/gofile", {
-        value: this.tokenInput
+        value: this.tokenInput,
       });
       this.$emit("token-saved");
     },
@@ -94,7 +76,20 @@ export default {
     user: {
       immediate: true,
       handler(newValue) {
+        console.log("user has changed, dir is " + newValue.rootFolder);
         this.currentDirectory = newValue.rootFolder;
+      },
+    },
+    currentDirectory: {
+      immediate: true,
+      async handler() {
+        const contentResponse = await axios.get(
+          `be/v1/files/${this.currentDirectory}`
+        );
+        if (!contentResponse.data.children) {
+          throw "Invalid structure received";
+        }
+        this.currentItems = contentResponse.data.children;
       },
     },
   },
