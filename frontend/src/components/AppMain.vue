@@ -18,6 +18,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <div v-if="currentDirectory != null">
+      <div v-for="file in folderContent" :key="file.id">
+        <v-icon>{{ itemIcon(file) }}</v-icon>
+        <span @click="handleItemClick(file)">{{ file.name }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -30,11 +37,34 @@ export default {
   data() {
     return {
       tokenInput: null,
+      currentDirectory: null,
     };
   },
   computed: {
     hasTokenSet() {
       return this.user.token !== null;
+    },
+    folderContent() {
+      // eslint-disable-next-line no-console
+      console.log(this.currentDirectory); // todo fetch the content of the directory
+      return [
+        {
+          id: "sdlkfafkj",
+          name: "test file",
+          type: "FILE",
+          created: new Date(),
+          size: 453,
+          children: [],
+        },
+        {
+          id: "d'f;lps;s",
+          name: "test folder",
+          type: "FOLDER",
+          created: new Date(),
+          size: 0,
+          children: [],
+        },
+      ];
     },
   },
   methods: {
@@ -44,6 +74,23 @@ export default {
       if (saved) {
         this.$emit("token-saved");
       }
+    },
+    itemIcon(item) {
+      return item.type === "FOLDER" ? "mdi-folder" : "mdi-file";
+    },
+    handleItemClick(item) {
+      if (item.type === "FOLDER") {
+        // eslint-disable-next-line no-console
+        console.log(`changing directory to ${item.id}`);
+        this.currentDirectory = item.id;
+      } else {
+        // todo what to do?
+      }
+    },
+  },
+  watch: {
+    user(newValue) {
+      this.currentDirectory = newValue.rootFolder;
     },
   },
 };

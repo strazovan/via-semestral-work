@@ -45,7 +45,7 @@ export default {
       this.userInfo = {
         username: "strazovan",
         token: null,
-        rootFolder: ""
+        rootFolder: null
       };
     },
     tokenSaved() {
@@ -53,7 +53,8 @@ export default {
       // todo this is here just for development
       this.userInfo = {
         ...this.userInfo,
-        token: "test"
+        token: "test",
+        rootFolder: "123"
       };
     },
   },
