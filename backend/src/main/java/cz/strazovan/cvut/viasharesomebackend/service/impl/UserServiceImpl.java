@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDocument getUserDocument(String username) {
+        return getUserDocumentThrowing(username);
+    }
+
+    @Override
     public void saveToken(String username, String token) {
         final var userDocument = this.getUserDocumentThrowing(username);
         final ObjectIdentifier usersRootFolder = this.goFileStorage.getUsersRootFolder(() -> token);
@@ -106,7 +111,7 @@ public class UserServiceImpl implements UserService {
             // we are uploading file
             final byte[] bytes = Base64.getDecoder().decode(newFileEntry.getContent());
             final CheckResult checkResult = this.virusTotalApi.checkFile(bytes);
-            if(checkResult != CheckResult.OK) {
+            if (checkResult != CheckResult.OK) {
                 // todo if throwing and failing is the best way. the other solution could be to setVirusCheckResult to FAILED
                 throw new RuntimeException("File is not safe.");
             }

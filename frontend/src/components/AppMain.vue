@@ -89,8 +89,11 @@ export default {
     },
   },
   watch: {
-    user(newValue) {
-      this.currentDirectory = newValue.rootFolder;
+    user: {
+      immediate: true,
+      handler(newValue) {
+        this.currentDirectory = newValue.rootFolder;
+      },
     },
   },
 };

@@ -11,13 +11,9 @@
 <script>
 export default {
   name: "AppLogin",
-  props: {
-      value: Boolean
-  },
   methods: {
       login() {
-          // todo perform proper login
-          this.$emit('input', true)
+          window.location.href = '/be/oauth2/authorization/google'
       }
   }
 };

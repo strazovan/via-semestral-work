@@ -5,9 +5,9 @@ import cz.strazovan.cvut.viasharesomebackend.api.model.*;
 import cz.strazovan.cvut.viasharesomebackend.connectors.storage.model.ObjectIdentifier;
 import cz.strazovan.cvut.viasharesomebackend.model.FileDescriptor;
 import cz.strazovan.cvut.viasharesomebackend.model.FileType;
+import cz.strazovan.cvut.viasharesomebackend.model.UserDocument;
 import cz.strazovan.cvut.viasharesomebackend.service.UserService;
 import cz.strazovan.cvut.viasharesomebackend.utils.security.UserContext;
-import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -68,7 +68,7 @@ public class FilesController implements V1ApiDelegate {
     public ResponseEntity<DownloadLink> getFileContent(String file) {
         final var fileDownloadLink = this.userService.getFileDownloadLink(UserContext.getOauthUserMail().orElseThrow(),
                 new ObjectIdentifier(file));
-        if(fileDownloadLink.isEmpty()) {
+        if (fileDownloadLink.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new DownloadLink().link(fileDownloadLink.get()));
@@ -81,6 +81,19 @@ public class FilesController implements V1ApiDelegate {
         return ResponseEntity.ok(new ShareLink()
                 .expirirationDate(shareLink.getExpirirationDate())
                 .url(link));
+    }
+
+    @Override
+    public ResponseEntity<UserInfo> getUser() {
+        final String currentUser = UserContext.getOauthUserMail().orElseThrow();
+        final UserDocument userDocument = this.userService.getUserDocument(currentUser);
+        final var userInfo = new UserInfo();
+        userInfo.setUsername(currentUser);
+        if (userDocument.getGoFileStorageInfo() != null) {
+            userInfo.setToken(userDocument.getGoFileStorageInfo().getToken());
+            userInfo.setRootFolder(userDocument.getGoFileStorageInfo().getRootFolderId());
+        }
+        return ResponseEntity.ok(userInfo);
     }
 
     private FileEntry fileDescriptorMapper(FileDescriptor descriptor) {

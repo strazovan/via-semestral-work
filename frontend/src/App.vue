@@ -7,7 +7,7 @@
     </v-app-bar>
 
     <v-main>
-      <app-login v-if="!loggedIn" v-model="loggedIn"></app-login>
+      <app-login v-if="!loggedIn"></app-login>
       <div v-else>
         <app-main :user="userInfo" @token-saved="tokenSaved"></app-main>
       </div>
@@ -18,13 +18,13 @@
 <script>
 import AppLogin from "./components/AppLogin.vue";
 import AppMain from "./components/AppMain.vue";
+import axios from "axios";
 export default {
   name: "App",
 
   components: { AppLogin, AppMain },
 
   data: () => ({
-    loggedIn: false, // todo this should be checked by backend call
     userInfo: null,
   }),
   created() {
@@ -34,35 +34,29 @@ export default {
     username() {
       return this.userInfo && this.userInfo.username; // todo check why optional chaning is not working
     },
+    loggedIn() {
+      return this.userInfo !== null;
+    }
   },
   methods: {
-    getUserInfo() {
+    async getUserInfo() {
       // return null if the user is not logged in, otherwise returns username and token
       // todo call backend
-      if (!this.loggedIn) {
-        return null;
+      try {
+        const meResponse = await axios.get("/be/v1/users/me");
+        this.userInfo = meResponse.data;
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          // not logged in
+          return;
+        } else {
+          throw error;
+        }
       }
-      this.userInfo = {
-        username: "strazovan",
-        token: null,
-        rootFolder: null
-      };
     },
     tokenSaved() {
       this.getUserInfo();
-      // todo this is here just for development
-      this.userInfo = {
-        ...this.userInfo,
-        token: "test",
-        rootFolder: "123"
-      };
     },
-  },
-  watch: {
-    loggedIn() {
-      // todo this is just for prototyping
-      this.getUserInfo();
-    },
-  },
+  }
 };
 </script>

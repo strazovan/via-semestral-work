@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface UserService {
     UserDocument createUserDocument(String username);
 
+    UserDocument getUserDocument(String username);
+
     void saveToken(String username, String token);
 
     Optional<FileDescriptor> getFileDescriptor(String username, String path);
@@ -25,4 +27,6 @@ public interface UserService {
     Optional<String> getFileDownloadLink(String username, ObjectIdentifier objectIdentifier);
 
     String createShareLink(String username, String file, Instant expiration);
+
+
 }

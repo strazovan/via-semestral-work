@@ -178,6 +178,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /v1/users/me:
+    get:
+      tags: ["Users"]
+      operationId: getUser
+      summary: Returns info about current user
+      responses:
+        "200":
+          description: |-
+            Info about the user
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/UserInfo"
+        "302":
+          description: Redirect
+        "500":
+          description: General error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 components:
   parameters:
@@ -190,6 +211,20 @@ components:
         type: string
       example: "56456fasASDFA"
   schemas:
+    UserInfo:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+          description: Username
+        token:
+          type: string
+          description: User's token
+        rootFolder:
+          type: string
+          description: User's root folder
     FileEntry:
       type: object
       description: Describes a file.
