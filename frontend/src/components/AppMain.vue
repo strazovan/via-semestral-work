@@ -23,7 +23,7 @@
     </v-dialog>
     <div class="buttons-area">
       <v-btn class="mr-2" text color="primary"><v-icon>mdi-file-image-plus</v-icon> Upload a file</v-btn>
-      <v-btn text color="primary"><v-icon>mdi-folder-plus</v-icon> Upload new folder</v-btn>
+      <v-btn text color="primary"><v-icon>mdi-folder-plus</v-icon> Create new folder</v-btn>
     </div>
     <div>
       <div v-if="currentDirectory != null">
