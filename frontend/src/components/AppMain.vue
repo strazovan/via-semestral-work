@@ -76,7 +76,6 @@ export default {
     user: {
       immediate: true,
       handler(newValue) {
-        console.log("user has changed, dir is " + newValue.rootFolder);
         this.currentDirectory = newValue.rootFolder;
       },
     },
