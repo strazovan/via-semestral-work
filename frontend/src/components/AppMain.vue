@@ -8,8 +8,16 @@
       v-model="newFolderDialogVisible"
       @save="createNewFolder"
     ></new-folder-dialog>
+    <file-upload-dialog
+      v-model="uploadFileDialogVisible"
+      @upload="uploadFile"
+    ></file-upload-dialog>
     <div class="buttons-area">
-      <v-btn class="mr-2" text color="primary"
+      <v-btn
+        class="mr-2"
+        text
+        color="primary"
+        @click="uploadFileDialogVisible = true"
         ><v-icon>mdi-file-image-plus</v-icon> Upload a file</v-btn
       >
       <v-btn text color="primary" @click="newFolderDialogVisible = true"
@@ -31,12 +39,22 @@
 import axios from "axios";
 import TokenDialog from "./TokenDialog.vue";
 import NewFolderDialog from "./NewFolderDialog.vue";
+import FileUploadDialog from "./FileUploadDialog.vue";
+
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 export default {
   name: "AppMain",
   components: {
     TokenDialog,
     NewFolderDialog,
+    FileUploadDialog,
   },
   props: {
     user: Object, // userinfo, this component will be only rendered when this object is not null
@@ -46,6 +64,7 @@ export default {
       currentDirectory: null,
       currentItems: [],
       newFolderDialogVisible: false,
+      uploadFileDialogVisible: false,
     };
   },
   computed: {
@@ -68,6 +87,21 @@ export default {
         type: "FOLDER",
       });
       this.newFolderDialogVisible = false; // todo this wont clear the input
+      await this.fetchCurrentFolderContent(); // reload folder content
+    },
+    async uploadFile(file) {
+      const base64 = await toBase64(file);
+      // remove the prefix
+      const base64WithoutPrefix = base64.substring(
+        base64.indexOf("base64,") + "base64,".length
+      );
+      await axios.post("be/v1/files", {
+        name: file.name,
+        parentId: this.currentDirectory,
+        type: "FILE",
+        content: base64WithoutPrefix,
+      });
+       this.uploadFileDialogVisible = false; // todo this wont clear the input
       await this.fetchCurrentFolderContent(); // reload folder content
     },
     itemIcon(item) {
