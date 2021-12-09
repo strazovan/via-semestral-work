@@ -26,7 +26,6 @@
       <v-btn text color="primary"><v-icon>mdi-folder-plus</v-icon> Upload new folder</v-btn>
     </div>
     <div>
-      cau
       <div v-if="currentDirectory != null">
         <div v-for="file in currentItems" :key="file.id">
           <v-icon>{{ itemIcon(file) }}</v-icon>
