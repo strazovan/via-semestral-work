@@ -21,11 +21,17 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <div v-if="currentDirectory != null">
-      <div v-for="file in currentItems" :key="file.id">
-        <v-icon>{{ itemIcon(file) }}</v-icon>
-        <span @click="handleItemClick(file)">{{ file.name }}</span>
+    <div class="buttons-area">
+      <v-btn class="mr-2" text color="primary"><v-icon>mdi-file-image-plus</v-icon> Upload a file</v-btn>
+      <v-btn text color="primary"><v-icon>mdi-folder-plus</v-icon> Upload new folder</v-btn>
+    </div>
+    <div>
+      cau
+      <div v-if="currentDirectory != null">
+        <div v-for="file in currentItems" :key="file.id">
+          <v-icon>{{ itemIcon(file) }}</v-icon>
+          <span @click="handleItemClick(file)">{{ file.name }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -96,4 +102,9 @@ export default {
 </script>
 
 <style scoped>
+.buttons-area {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+}
 </style>
