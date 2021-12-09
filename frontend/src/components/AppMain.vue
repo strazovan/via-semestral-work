@@ -1,29 +1,13 @@
 <template>
   <div>
-    <v-dialog width="500" :value="!hasTokenSet" persistent>
-      <v-card>
-        <v-card-title class="text-h5"> Enter your API key </v-card-title>
-
-        <v-card-text>
-          <v-row>
-            <v-col>
-              <v-text-field
-                label="GoFile token"
-                v-model="tokenInput"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="saveToken"> Save </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <token-dialog :hasTokenSet="hasTokenSet" @token-save="saveToken"></token-dialog>
     <div class="buttons-area">
-      <v-btn class="mr-2" text color="primary"><v-icon>mdi-file-image-plus</v-icon> Upload a file</v-btn>
-      <v-btn text color="primary"><v-icon>mdi-folder-plus</v-icon> Create new folder</v-btn>
+      <v-btn class="mr-2" text color="primary"
+        ><v-icon>mdi-file-image-plus</v-icon> Upload a file</v-btn
+      >
+      <v-btn text color="primary"
+        ><v-icon>mdi-folder-plus</v-icon> Create new folder</v-btn
+      >
     </div>
     <div>
       <div v-if="currentDirectory != null">
@@ -38,15 +22,18 @@
 
 <script>
 import axios from "axios";
+import TokenDialog from "./TokenDialog.vue";
 
 export default {
   name: "AppMain",
+  components: {
+    TokenDialog,
+  },
   props: {
     user: Object, // userinfo, this component will be only rendered when this object is not null
   },
   data() {
     return {
-      tokenInput: null,
       currentDirectory: null,
       currentItems: [],
     };
@@ -57,10 +44,10 @@ export default {
     },
   },
   methods: {
-    async saveToken() {
+    async saveToken(tokenValue) {
       // todo try-catch
       await axios.post("be/v1/tokens/gofile", {
-        value: this.tokenInput,
+        value: tokenValue,
       });
       this.$emit("token-saved");
     },
