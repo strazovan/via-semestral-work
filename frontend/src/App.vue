@@ -40,8 +40,6 @@ export default {
   },
   methods: {
     async getUserInfo() {
-      // return null if the user is not logged in, otherwise returns username and token
-      // todo call backend
       try {
         const meResponse = await axios.get("/be/v1/users/me");
         this.userInfo = meResponse.data;
