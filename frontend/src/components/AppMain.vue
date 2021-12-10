@@ -42,6 +42,7 @@
           </div>
         </div>
       </div>
+      <div v-if="showNoContent"></div>
       <v-overlay :value="loading">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
       </v-overlay>
@@ -148,6 +149,9 @@ export default {
       }
     },
     async fetchCurrentFolderContent() {
+      if (this.currentDirectory === null) {
+        return;
+      }
       this.loading = true;
       this.currentItems = [];
       const contentResponse = await axios.get(
