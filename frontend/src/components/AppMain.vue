@@ -26,6 +26,10 @@
     </div>
     <div>
       <div v-if="currentDirectory != null">
+        <div v-if="parentFolder != null">
+          <v-icon>mdi-arrow-up-left</v-icon>
+          <span @click="goUp()">..</span>
+        </div>
         <div v-for="file in currentItems" :key="file.id">
           <v-icon>{{ itemIcon(file) }}</v-icon>
           <span @click="handleItemClick(file)">{{ file.name }}</span>
@@ -61,6 +65,7 @@ export default {
   },
   data() {
     return {
+      path: [],
       currentDirectory: null,
       currentItems: [],
       newFolderDialogVisible: false,
@@ -70,6 +75,9 @@ export default {
   computed: {
     hasTokenSet() {
       return this.user.token !== null;
+    },
+    parentFolder() {
+      return this.path.length > 0 ? this.path[this.path.length - 1] : null;
     },
   },
   methods: {
@@ -101,16 +109,19 @@ export default {
         type: "FILE",
         content: base64WithoutPrefix,
       });
-       this.uploadFileDialogVisible = false; // todo this wont clear the input
+      this.uploadFileDialogVisible = false; // todo this wont clear the input
       await this.fetchCurrentFolderContent(); // reload folder content
     },
     itemIcon(item) {
       return item.type === "FOLDER" ? "mdi-folder" : "mdi-file";
     },
+    goUp() {
+      const parent = this.path.splice(-1);
+      this.currentDirectory = parent;
+    },
     handleItemClick(item) {
       if (item.type === "FOLDER") {
-        // eslint-disable-next-line no-console
-        console.log(`changing directory to ${item.id}`);
+        this.path.push(this.currentDirectory);
         this.currentDirectory = item.id;
       } else {
         // todo what to do?
