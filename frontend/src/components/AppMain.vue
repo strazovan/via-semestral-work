@@ -24,15 +24,19 @@
         ><v-icon>mdi-folder-plus</v-icon> Create new folder</v-btn
       >
     </div>
-    <div>
-      <div v-if="currentDirectory != null">
-        <div v-if="parentFolder != null">
-          <v-icon>mdi-arrow-up-left</v-icon>
-          <span @click="goUp()">..</span>
-        </div>
-        <div v-for="file in currentItems" :key="file.id">
-          <v-icon>{{ itemIcon(file) }}</v-icon>
-          <span @click="handleItemClick(file)">{{ file.name }}</span>
+    <div class="main-content">
+      <div class="items-container">
+        <div v-if="currentDirectory != null">
+          <div v-if="parentFolder != null" class="item">
+            <v-icon class="item-icon">mdi-arrow-up-left</v-icon>
+            <span class="link" @click="goUp()">..</span>
+          </div>
+          <div v-for="file in currentItems" :key="file.id" class="item">
+            <v-icon class="item-icon">{{ itemIcon(file) }}</v-icon>
+            <span class="link" @click="handleItemClick(file)">{{
+              file.name
+            }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -158,6 +162,35 @@ export default {
 .buttons-area {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   padding: 1rem;
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+}
+
+.items-container {
+  max-width: 50%;
+  flex-grow: 1;
+}
+
+.item {
+  display: flex;
+}
+
+.item-icon {
+  margin-right: 0.5rem;
+}
+
+.link {
+  color: gray;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: black;
+  text-decoration: underline !important;
 }
 </style>
