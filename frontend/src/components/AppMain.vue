@@ -42,7 +42,9 @@
           </div>
         </div>
       </div>
-      <div v-if="showNoContent"></div>
+      <div v-if="showNoContent" class="no-content text-h5">
+        Start by creating a folder or upload a new file
+      </div>
       <v-overlay :value="loading">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
       </v-overlay>
@@ -93,6 +95,13 @@ export default {
     },
     parentFolder() {
       return this.path.length > 0 ? this.path[this.path.length - 1] : null;
+    },
+    showNoContent() {
+      return (
+        this.hasTokenSet &&
+        this.parentFolder == null &&
+        this.currentItems.length === 0
+      );
     },
   },
   methods: {
@@ -186,6 +195,12 @@ export default {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
+  padding: 1rem;
+}
+
+.no-content {
+  flex-grow: 1;
+  color: gray;
   padding: 1rem;
 }
 
