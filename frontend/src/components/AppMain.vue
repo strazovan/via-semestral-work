@@ -31,14 +31,23 @@
       <div class="items-container">
         <div v-if="currentDirectory != null">
           <div v-if="parentFolder != null" class="item">
-            <v-icon class="item-icon">mdi-arrow-up-left</v-icon>
-            <span class="link" @click="goUp()">..</span>
+            <div>
+              <v-icon class="item-icon">mdi-arrow-up-left</v-icon>
+              <span class="link" @click="goUp()">..</span>
+            </div>
           </div>
           <div v-for="file in currentItems" :key="file.id" class="item">
-            <v-icon class="item-icon">{{ itemIcon(file) }}</v-icon>
-            <span class="link" @click="handleItemClick(file)">{{
-              file.name
-            }}</span>
+            <div>
+              <v-icon class="item-icon">{{ itemIcon(file) }}</v-icon>
+              <span class="link" @click="handleItemClick(file)">{{
+                file.name
+              }}</span>
+            </div>
+            <div>
+              <v-icon class="delete-icon" @click="deleteItem(file)"
+                >mdi-delete-outline</v-icon
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -98,6 +107,7 @@ export default {
     },
     showNoContent() {
       return (
+        !this.loading &&
         this.hasTokenSet &&
         this.parentFolder == null &&
         this.currentItems.length === 0
@@ -172,6 +182,13 @@ export default {
       }
       this.currentItems = contentResponse.data.children;
     },
+    async deleteItem(item) {
+      // todo confirm dialog
+      this.loading = true;
+      await axios.delete(`be/v1/files/${item.id}`);
+      this.loading = false;
+      this.fetchCurrentFolderContent();
+    },
   },
   watch: {
     user: {
@@ -216,6 +233,7 @@ export default {
 
 .item {
   display: flex;
+  justify-content: space-between;
 }
 
 .item-icon {
@@ -230,5 +248,14 @@ export default {
 .link:hover {
   color: black;
   text-decoration: underline !important;
+}
+
+.delete-icon {
+  margin-right: 0.5rem;
+}
+
+.delete-icon:hover {
+  color: red;
+  cursor: pointer;
 }
 </style>
