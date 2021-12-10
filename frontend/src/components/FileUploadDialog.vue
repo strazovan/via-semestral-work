@@ -20,18 +20,20 @@
         <v-spacer></v-spacer>
         <v-btn text @click="localValue = false"> Cancel </v-btn>
         <!-- todo loading state for the button when it is saving -->
-        <v-btn color="blue darken-1" text @click="upload"> Upload </v-btn>
+        <v-btn color="blue darken-1" text @click="upload" :loading="uploading">
+          Upload
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-
 export default {
   name: "FileUploadDialog",
   props: {
     value: Boolean,
+    uploading: Boolean,
   },
   data() {
     return {
@@ -52,7 +54,7 @@ export default {
   methods: {
     upload() {
       // todo check maximum size
-      this.$emit('upload', this.file)
+      this.$emit("upload", this.file);
     },
   },
 };

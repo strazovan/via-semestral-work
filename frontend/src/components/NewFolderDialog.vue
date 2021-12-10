@@ -17,7 +17,9 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="localValue = false"> Cancel </v-btn>
-        <v-btn color="blue darken-1" text @click="create"> Save </v-btn>
+        <v-btn color="blue darken-1" text @click="create" :loading="creating">
+          Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -28,6 +30,7 @@ export default {
   name: "NewFolderDialog",
   props: {
     value: Boolean,
+    creating: Boolean,
   },
   data() {
     return {
@@ -48,7 +51,7 @@ export default {
   },
   methods: {
     create() {
-      this.$emit('save', this.folderName)
+      this.$emit("save", this.folderName);
     },
   },
 };

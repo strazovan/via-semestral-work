@@ -3,14 +3,17 @@
     <token-dialog
       :hasTokenSet="hasTokenSet"
       @token-save="saveToken"
+      :saving="saving"
     ></token-dialog>
     <new-folder-dialog
       v-model="newFolderDialogVisible"
       @save="createNewFolder"
+      :creating="creating"
     ></new-folder-dialog>
     <file-upload-dialog
       v-model="uploadFileDialogVisible"
       @upload="uploadFile"
+      :uploading="uploading"
     ></file-upload-dialog>
     <div class="buttons-area">
       <v-btn
@@ -39,6 +42,9 @@
           </div>
         </div>
       </div>
+      <v-overlay :value="loading">
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+      </v-overlay>
     </div>
   </div>
 </template>
@@ -74,6 +80,10 @@ export default {
       currentItems: [],
       newFolderDialogVisible: false,
       uploadFileDialogVisible: false,
+      loading: false,
+      uploading: false,
+      creating: false,
+      saving: false,
     };
   },
   computed: {
@@ -86,22 +96,27 @@ export default {
   },
   methods: {
     async saveToken(tokenValue) {
+      this.saving = true;
       // todo try-catch
       await axios.post("be/v1/tokens/gofile", {
         value: tokenValue,
       });
+      this.saving = false;
       this.$emit("token-saved");
     },
     async createNewFolder(folderName) {
+      this.creating = true;
       await axios.post("be/v1/files", {
         name: folderName,
         parentId: this.currentDirectory,
         type: "FOLDER",
       });
+      this.creating = false;
       this.newFolderDialogVisible = false; // todo this wont clear the input
       await this.fetchCurrentFolderContent(); // reload folder content
     },
     async uploadFile(file) {
+      this.uploading = true;
       const base64 = await toBase64(file);
       // remove the prefix
       const base64WithoutPrefix = base64.substring(
@@ -113,6 +128,7 @@ export default {
         type: "FILE",
         content: base64WithoutPrefix,
       });
+      this.uploading = false;
       this.uploadFileDialogVisible = false; // todo this wont clear the input
       await this.fetchCurrentFolderContent(); // reload folder content
     },
@@ -132,9 +148,12 @@ export default {
       }
     },
     async fetchCurrentFolderContent() {
+      this.loading = true;
+      this.currentItems = [];
       const contentResponse = await axios.get(
         `be/v1/files/${this.currentDirectory}`
       );
+      this.loading = false;
       if (!contentResponse.data.children) {
         throw "Invalid structure received";
       }
