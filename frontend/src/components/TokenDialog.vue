@@ -7,6 +7,7 @@
         <v-row>
           <v-col>
             <v-text-field
+              :rules="rules"
               label="GoFile token"
               v-model="tokenInput"
             ></v-text-field>
@@ -16,7 +17,13 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="saveToken" :loading="saving">
+        <v-btn
+          color="blue darken-1"
+          text
+          @click="saveToken"
+          :loading="saving"
+          :disabled="!valid"
+        >
           Save
         </v-btn>
       </v-card-actions>
@@ -34,10 +41,19 @@ export default {
   data() {
     return {
       tokenInput: null,
+      rules: [(value) => !!value || "Required."],
     };
+  },
+  computed: {
+    valid() {
+      return !!this.tokenInput;
+    },
   },
   methods: {
     saveToken() {
+      if (!this.tokenInput) {
+        return;
+      }
       this.$emit("token-save", this.tokenInput);
     },
   },

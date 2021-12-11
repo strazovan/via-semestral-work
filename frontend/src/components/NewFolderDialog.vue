@@ -7,6 +7,7 @@
         <v-row>
           <v-col>
             <v-text-field
+              :rules="rules"
               label="Folder name"
               v-model="folderName"
             ></v-text-field>
@@ -17,7 +18,13 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="localValue = false"> Cancel </v-btn>
-        <v-btn color="blue darken-1" text @click="create" :loading="creating">
+        <v-btn
+          color="blue darken-1"
+          text
+          @click="create"
+          :loading="creating"
+          :disabled="disabled"
+        >
           Save
         </v-btn>
       </v-card-actions>
@@ -35,6 +42,7 @@ export default {
   data() {
     return {
       folderName: null,
+      rules: [(value) => !!value || "Required."],
     };
   },
   computed: {
@@ -48,9 +56,15 @@ export default {
         this.$emit("input", newValue);
       },
     },
+    disabled() {
+      return !this.folderName;
+    },
   },
   methods: {
     create() {
+      if (!this.folderName) {
+        return;
+      }
       this.$emit("save", this.folderName);
     },
   },

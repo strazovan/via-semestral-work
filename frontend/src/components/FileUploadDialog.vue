@@ -11,6 +11,7 @@
               truncate-length="20"
               label="File to upload"
               v-model="file"
+              :rules="rules"
             ></v-file-input>
           </v-col>
         </v-row>
@@ -19,8 +20,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="localValue = false"> Cancel </v-btn>
-        <!-- todo loading state for the button when it is saving -->
-        <v-btn color="blue darken-1" text @click="upload" :loading="uploading">
+        <v-btn color="blue darken-1" text @click="upload" :loading="uploading" :disabled="!valid">
           Upload
         </v-btn>
       </v-card-actions>
@@ -38,6 +38,11 @@ export default {
   data() {
     return {
       file: null,
+      rules: [
+        (value) => !!value || "Required",
+        (value) =>
+          (!!value && value.size < 5000000) || "Maximum file size exceeded.",
+      ],
     };
   },
   computed: {
@@ -50,10 +55,15 @@ export default {
         this.$emit("input", newValue);
       },
     },
+    valid() {
+      return !!this.file && this.file.size < 5000000;
+    },
   },
   methods: {
     upload() {
-      // todo check maximum size
+      if (!this.valid) {
+        return;
+      }
       this.$emit("upload", this.file);
     },
   },
