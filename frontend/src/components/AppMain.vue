@@ -159,12 +159,13 @@ export default {
       const parent = this.path.splice(-1);
       this.currentDirectory = parent;
     },
-    handleItemClick(item) {
+    async handleItemClick(item) {
       if (item.type === "FOLDER") {
         this.path.push(this.currentDirectory);
         this.currentDirectory = item.id;
       } else {
-        // todo what to do?
+        const contentHolder = await axios.get(`be/v1/files/${item.id}/content`);
+        window.open(contentHolder.data.link)
       }
     },
     async fetchCurrentFolderContent() {
