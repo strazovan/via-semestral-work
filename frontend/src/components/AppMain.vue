@@ -43,7 +43,8 @@
                 file.name
               }}</span>
             </div>
-            <div>
+            <div class="item-info-tools">
+              <span>{{ itemAdditionalInfo(file) }}</span>
               <v-icon class="delete-icon" @click="deleteItem(file)"
                 >mdi-delete-outline</v-icon
               >
@@ -165,7 +166,7 @@ export default {
         this.currentDirectory = item.id;
       } else {
         const contentHolder = await axios.get(`be/v1/files/${item.id}/content`);
-        window.open(contentHolder.data.link)
+        window.open(contentHolder.data.link);
       }
     },
     async fetchCurrentFolderContent() {
@@ -189,6 +190,12 @@ export default {
       await axios.delete(`be/v1/files/${item.id}`);
       this.loading = false;
       this.fetchCurrentFolderContent();
+    },
+    itemAdditionalInfo(item) {
+      if (item.type == "FILE") {
+        return `${item.size / 1000} kB`;
+      }
+      return "";
     },
   },
   watch: {
@@ -258,5 +265,9 @@ export default {
 .delete-icon:hover {
   color: red;
   cursor: pointer;
+}
+
+.item-info-tools {
+  display: flex;
 }
 </style>
