@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface UserService {
     UserDocument createUserDocument(String username);
 
-    UserDocument getUserDocument(String username);
+    Optional<UserDocument> getUserDocument(String username);
 
     void saveToken(String username, String token);
 

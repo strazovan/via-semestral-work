@@ -47,8 +47,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDocument getUserDocument(String username) {
-        return getUserDocumentThrowing(username);
+    public Optional<UserDocument> getUserDocument(String username) {
+        return this.userDocumentDao.findByUsername(username);
     }
 
     @Override

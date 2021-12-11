@@ -86,7 +86,7 @@ public class FilesController implements V1ApiDelegate {
     @Override
     public ResponseEntity<UserInfo> getUser() {
         final String currentUser = UserContext.getOauthUserMail().orElseThrow();
-        final UserDocument userDocument = this.userService.getUserDocument(currentUser);
+        final UserDocument userDocument = this.userService.getUserDocument(currentUser).orElseThrow();
         final var userInfo = new UserInfo();
         userInfo.setUsername(currentUser);
         if (userDocument.getGoFileStorageInfo() != null) {
