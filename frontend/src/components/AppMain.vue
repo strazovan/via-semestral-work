@@ -242,6 +242,8 @@ export default {
 .item {
   display: flex;
   justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid lightgray;
 }
 
 .item-icon {
