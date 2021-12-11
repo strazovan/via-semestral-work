@@ -158,7 +158,7 @@ export default {
     },
     goUp() {
       const parent = this.path.splice(-1);
-      this.currentDirectory = parent;
+      this.currentDirectory = parent[0];
     },
     async handleItemClick(item) {
       if (item.type === "FOLDER") {
