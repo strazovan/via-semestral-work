@@ -21,10 +21,10 @@
         text
         color="primary"
         @click="uploadFileDialogVisible = true"
-        ><v-icon>mdi-file-image-plus</v-icon> Upload a file</v-btn
+        ><v-icon>mdi-file-image-plus-outline</v-icon> Upload a file</v-btn
       >
       <v-btn text color="primary" @click="newFolderDialogVisible = true"
-        ><v-icon>mdi-folder-plus</v-icon> Create new folder</v-btn
+        ><v-icon>mdi-folder-plus-outline</v-icon> Create new folder</v-btn
       >
     </div>
     <div class="main-content">
@@ -44,7 +44,7 @@
               }}</span>
             </div>
             <div class="item-info-tools">
-              <span>{{ itemAdditionalInfo(file) }}</span>
+              <span class="text--secondary text-caption">{{ itemAdditionalInfo(file) }}</span>
               <v-icon class="delete-icon" @click="deleteItem(file)"
                 >mdi-delete-outline</v-icon
               >
@@ -154,7 +154,7 @@ export default {
       await this.fetchCurrentFolderContent(); // reload folder content
     },
     itemIcon(item) {
-      return item.type === "FOLDER" ? "mdi-folder" : "mdi-file";
+      return item.type === "FOLDER" ? "mdi-folder-outline" : "mdi-file-outline";
     },
     goUp() {
       const parent = this.path.splice(-1);
@@ -271,5 +271,6 @@ export default {
 
 .item-info-tools {
   display: flex;
+  align-items: flex-end;
 }
 </style>

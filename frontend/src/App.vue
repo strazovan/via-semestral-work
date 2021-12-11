@@ -3,6 +3,7 @@
     <v-app-bar app color="primary" dark>
       <span class="text-h5">ShareSome</span>
       <v-spacer></v-spacer>
+      <v-icon v-if="username" class="mr-1">mdi-account-outline</v-icon>
       <span>{{ username }}</span>
     </v-app-bar>
 
@@ -36,7 +37,7 @@ export default {
     },
     loggedIn() {
       return this.userInfo !== null;
-    }
+    },
   },
   methods: {
     async getUserInfo() {
@@ -55,6 +56,6 @@ export default {
     tokenSaved() {
       this.getUserInfo();
     },
-  }
+  },
 };
 </script>
