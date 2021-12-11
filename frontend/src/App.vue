@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <span>ShareSome</span>
+      <span class="text-h5">ShareSome</span>
       <v-spacer></v-spacer>
       <span>{{ username }}</span>
     </v-app-bar>
