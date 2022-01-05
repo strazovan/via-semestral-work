@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  backend:
+    container_name: via-backend
+    build:
+      context: backend
+      dockerfile: "Dockerfile"
+    networks:
+      - via-network
+    env_file:
+      - .env
+    ports:
+      - 18095:18080
+    depends_on:
+      - mongodb
+    restart: on-failure
+
+  frontend:
+    container_name: via-frontend
+    build:
+      context: frontend
+      dockerfile: "Dockerfile"
+    networks:
+      - via-network
+    env_file:
+      - .env
+    ports:
+      - 18096:80
+    restart: on-failure
+
+  mongodb:
+    image: mongo:4.0.8
+    container_name: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    expose:
+      - ${MONGO_PORT}
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - "./mongo-init/:/docker-entrypoint-initdb.d/"
+    networks:
+      - via-network
+
+networks:
+  via-network:
+    driver: bridge
+
