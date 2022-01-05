@@ -135,7 +135,7 @@
 						<configuration>
                             <skipValidateSpec>true</skipValidateSpec>
 							<inputSpec>
-								${project.basedir}/../api-specification.yaml
+								${project.basedir}/api-specification.yaml
 							</inputSpec>
 							<generatorName>spring</generatorName>
 							<apiPackage>cz.strazovan.cvut.viasharesomebackend.api.controllers</apiPackage>
